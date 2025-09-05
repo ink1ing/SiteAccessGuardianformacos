@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --fg: #c9d1d9;
+      --muted: #8b949e;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --accent-hover: #1f6feb;
+      --danger: #f85149;
+      --danger-hover: #da3633;
+      --success-bg: rgba(46,160,67,0.15);
+      --success-fg: #3fb950;
+      --error-bg: rgba(248,81,73,0.15);
+      --error-fg: #f85149;
+    }
+
+    html, body { background: var(--bg); color: var(--fg); }
+    body {
+      width: 360px;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .icon { font-size: 22px; margin-right: 8px; }
+    .spacer { flex: 1; }
+
+    .lang-toggle {
+      background: transparent;
+      color: var(--fg);
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .lang-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+    .current-site {
+      margin-bottom: 16px;
+      padding: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .current-site-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .add-current-btn {
+      width: 100%;
+      padding: 8px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .add-current-btn:hover { background: var(--accent-hover); }
+
+    .add-site { display: flex; gap: 8px; margin-bottom: 16px; }
+    .add-site input {
+      flex: 1;
+      padding: 8px;
+      background: var(--bg);
+      color: var(--fg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    .add-site input::placeholder { color: var(--muted); }
+    .add-site button {
+      padding: 8px 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .add-site button:hover { background: var(--accent-hover); }
+
+    .sites-list { max-height: 220px; overflow-y: auto; }
+    .site-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px;
+      margin-bottom: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    .site-domain { font-weight: 500; }
+    .remove-btn {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .remove-btn:hover { background: var(--danger-hover); }
+
+    .status {
+      padding: 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      display: none;
+    }
+    .status.success { background: var(--success-bg); color: var(--success-fg); display: block; }
+    .status.error { background: var(--error-bg); color: var(--error-fg); display: block; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="icon">🔒</span>
+    <h3>Site Access Guardian</h3>
+    <div class="spacer"></div>
+    <button id="lang-toggle" class="lang-toggle" aria-label="Language">EN</button>
+  </div>
+
+  <div id="status" class="status"></div>
+
+  <div class="current-site">
+    <div class="current-site-label" data-i18n="currentPageLabel">当前页面</div>
+    <div id="current-domain">...</div>
+    <button id="add-current" class="add-current-btn" data-i18n="addCurrent">添加到受控列表</button>
+  </div>
+
+  <div class="add-site">
+    <input type="text" id="domain-input" placeholder="输入域名 (例如: google.com)">
+    <button id="add-btn" data-i18n="add">添加</button>
+  </div>
+
+  <div>
+    <h4 data-i18n="listTitle">受控网站列表</h4>
+    <div id="sites-list" class="sites-list">
+      <div style="text-align: center; color: var(--muted); padding: 20px;" data-i18n="loading">加载中...</div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

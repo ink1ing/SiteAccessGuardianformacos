@@ -1,0 +1,9 @@
+{
+  "name": "com.siteguardian.touchid",
+  "description": "Site Guardian Touch ID Authentication",
+  "path": "/Applications/SiteGuardian.app/Contents/MacOS/TouchIDAuth",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://YOUR_EXTENSION_ID_HERE/"
+  ]
+}

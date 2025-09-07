@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Site Guardian Gate</title>
+  <style>
+    :root { --bg:#0d1117; --fg:#c9d1d9; --muted:#8b949e; --border:#30363d; --accent:#58a6ff; --accent2:#1f6feb; --danger:#f85149; }
+    html,body { margin:0; padding:0; height:100%; background:var(--bg); color:var(--fg); font-family:-apple-system, BlinkMacSystemFont, sans-serif; }
+    .wrap { height:100%; display:flex; align-items:center; justify-content:center; }
+    .card { width: min(560px, calc(100% - 32px)); background:#161b22; border:1px solid var(--border); border-radius:12px; padding:24px; }
+    h2 { margin:0 0 8px; }
+    p { margin:0 0 16px; color:var(--muted); }
+    .row { display:flex; gap:8px; align-items:center; }
+    .btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:10px 16px; cursor:pointer; }
+    .btn:hover { background:var(--accent2); }
+    .err { color:var(--danger); margin-top:12px; }
+    code { color:#fff; background:#0b1016; padding:2px 6px; border-radius:6px; border:1px solid var(--border); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h2>Site Access Guardian</h2>
+      <p id="desc">需要指纹验证以访问目标页面</p>
+      <div style="margin:8px 0 16px;">
+        <div>目标地址: <code id="target"></code></div>
+        <div>目标域名: <code id="domain"></code></div>
+      </div>
+      <div class="row">
+        <button id="verify" class="btn">使用 Touch ID 验证</button>
+        <button id="cancel" class="btn" style="background:#39414a;">取消</button>
+      </div>
+      <div id="status" class="err"></div>
+    </div>
+  </div>
+  <script src="gate.js"></script>
+</body>
+</html>
+

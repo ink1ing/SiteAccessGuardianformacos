@@ -35,10 +35,9 @@
         statusEl.textContent = '放行失败：' + (grant && grant.error ? grant.error : '未知错误');
         return;
       }
-      // 跳回原目标
-      if (targetUrl) {
-        window.location.replace(targetUrl);
-      }
+      // 跳回原目标（若可获取），否则回到该域首页
+      const fallback = domain ? `https://${domain}` : '';
+      window.location.replace(targetUrl || fallback);
     } catch (e) {
       statusEl.textContent = '异常：' + (e && e.message ? e.message : e);
     }
@@ -50,4 +49,3 @@
   // 自动触发一次，用户也可手动重试
   doAuth();
 })();
-

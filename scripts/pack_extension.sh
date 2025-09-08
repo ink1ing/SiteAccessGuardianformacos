@@ -15,8 +15,9 @@ cp "$ROOT_DIR/manifest.json" "$TMP_DIR/" \
    && cp "$ROOT_DIR/background.js" "$TMP_DIR/" \
    && cp "$ROOT_DIR/content.js" "$TMP_DIR/" \
    && cp "$ROOT_DIR/popup.html" "$TMP_DIR/" \
-   && cp "$ROOT_DIR/popup.js" "$TMP_DIR/"
+   && cp "$ROOT_DIR/popup.js" "$TMP_DIR/" \
+   && cp "$ROOT_DIR/gate.html" "$TMP_DIR/" \
+   && cp "$ROOT_DIR/gate.js" "$TMP_DIR/"
 
 (cd "$TMP_DIR" && zip -qr "$OUT_DIR/$NAME" .)
 echo "[pack] created: $OUT_DIR/$NAME"
-

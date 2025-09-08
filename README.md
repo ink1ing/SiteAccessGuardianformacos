@@ -2,12 +2,12 @@ Site Guardian Chrome Extension — 交接与使用说明
 
 概述
 - 功能: 受控站点访问前要求通过 macOS Touch ID 验证。
-- 架构: Chrome Extension (MV3) + Native Messaging Host (Swift/LocalAuthentication)。
+- 架构: Chrome Extension (MV3) + Declarative Net Request (请求级拦截) + Native Messaging Host (Swift/LocalAuthentication)。
 
 目录结构
 - `manifest.json`: 扩展清单 (MV3)。
-- `background.js`: Service Worker，处理存储和与原生应用通信。
-- `content.js`: 在页面 `document_start` 拦截并显示验证覆盖层。
+- `background.js`: Service Worker，处理存储、DNR 动态规则与原生通信。
+- `gate.html` / `gate.js`: 门禁页。被拦截请求将重定向到此页以进行 Touch ID 验证。
 - `popup.html` / `popup.js`: 控制面板，管理受控网站列表。
 - `native_app_swift.swift`: 原生应用（Touch ID 验证）。
 - `native_manifest.json`: 主机清单模板（仅示例，不直接安装）。
@@ -45,15 +45,25 @@ Site Guardian Chrome Extension — 交接与使用说明
    - Chrome: `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.siteguardian.touchid.json`
    - Edge: `~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/com.siteguardian.touchid.json`
 
-5) 验证流程
+5) 验证流程（请求级拦截 / DNR）
    - 在弹窗中添加受控网站（例如 `twitter.com`）。
-   - 访问该网站：页面将先隐藏并显示验证覆盖层。
-   - 当原生程序返回 `success: true` 后恢复页面；否则跳转到 `about:blank`。
+   - 访问该站点时，扩展通过 Declarative Net Request 在“网络层”拦截主框架请求，重定向到扩展内 `gate.html`。
+   - 门禁页自动触发 Touch ID 验证；验证成功后，后台仅对“当前标签页 + 该域名”添加临时放行规则，并跳回原页面。
+   - 关闭标签页时，会清理该标签页对应的放行规则。
+
+   说明：为尽量保留原始路径，门禁页会尝试带回完整目标 URL；若浏览器限制导致无法获取，将回退到该域名首页（例如 `https://twitter.com`）。
 
 权限与存储
 - `permissions`: `storage`, `activeTab`, `nativeMessaging`
+- `permissions`: `declarativeNetRequest`
 - `host_permissions`: `<all_urls>`（用于在弹窗读取当前标签页 URL）
 - 存储使用 `chrome.storage.sync`，跨设备同步受控网站列表。
+
+请求级拦截工作原理
+- 受控域列表变化时，后台用 DNR Session 规则为每个域写入“主框架请求 → 门禁页”的重定向规则。
+- 用户在门禁页通过 Touch ID 后，后台为“当前 Tab + 该域名”写入更高优先级的 `allow` 规则，放行后续主框架导航。
+- 关闭标签页时，清理与该 Tab 关联的允许规则，避免泄漏。
+- 好处：站点脚本无法再通过篡改 DOM 移除覆盖层来绕过，拦截发生在请求层。
 
 故障排查
 - “Could not load manifest / Manifest file is missing or unreadable”
@@ -71,6 +81,13 @@ Site Guardian Chrome Extension — 交接与使用说明
 - Swift 编译错误（SDK/Toolchain 不匹配）
   - 安装/更新完整 Xcode；使用 `xcode-select` 指向 Xcode。
   - 再次执行 `./scripts/build_native.sh`。
+
+截图/动图示例（可选）
+- 将截图放到 `docs/images/`，并在此 README 中引用：
+  - 门禁页示意：`docs/images/gate.png`
+  - 弹窗（中英切换）：`docs/images/popup.png`
+  - 流程图：`docs/images/flow.png`
+- 建议用 macOS 自带截图或录制（快捷键 Shift+Cmd+5），保存后更新图片路径。
 
 安全与改进
 - 可选添加密码备用验证方式（LAContext 的 `deviceOwnerAuthentication`）。
